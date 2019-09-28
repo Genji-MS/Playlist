@@ -1,0 +1,33 @@
+<!-- templates/playlist_new.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="POST" action="/playlist">
+    <fieldset>
+        <legend>New Playlist</legend>
+        <!-- TITLE -->
+        <p>
+            <label for="title">Title</label></br>
+            <input type="text" name= "title"/>
+        </p>
+
+        <!-- DESCRIPTION -->
+        <p>
+            <label for="description">Descritption</label></br>
+            <input type="text" name = "description"/>            
+        </p>
+
+        <!-- VID LINKS-->
+        <p>
+            <label for="playlist-videos">Video URLs</label></br>
+            <p>Add videos in the form of 'https://youtube.com/embed/KEY' seperate with a new line</p>
+            <textarea id='playlist-videos' name = 'videos' rows = 10></textarea>
+        </p>
+    </fieldset>
+
+    <!-- BUTTON -->
+    <p>
+        <button type="submit">Save Playlist</button>
+    </p>
+</form>
+{% endblock %}
