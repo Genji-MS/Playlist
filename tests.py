@@ -7,10 +7,10 @@ from app import app #throws error when reading pymongo unless pymongo is install
 sample_playlist_id = ObjectId('5d55cffc4a3d4031f42827a3')
 sample_playlist = {
     'title': 'Cat Videos',
-    'description': 'Cats acting Wierd',
+    'description': 'Cats acting wierd',
     'videos': [
         'https://youtube.com/embed/hY7m5jjJ9mM',
-        'https://youtube.com/embed/CQ85sUNBK7w'
+        'https://www.youtube.com/embed/CQ85sUNBK7w'
     ]
 }
 sample_form_data = {
@@ -22,7 +22,7 @@ sample_form_data = {
 class PlaylistTests(TestCase):
     """Flask tests."""
 
-    def Setup(self):
+    def setUp(self): #Why is override function written in camelCase? 'set Up' isn't the same as 'Setup' to avoid confusion as a setter/getter it should be named 'setup', or 'setup_tests' for clarity
         """Stuff to do before every test"""
         #Get the Flask test client
         self.client = app.test_client()
@@ -60,7 +60,7 @@ class PlaylistTests(TestCase):
         self.assertEqual(result.status, '200 OK')
         self.assertIn(b'Cat Videos', result.data)
 
-    @mock.patch('pymongo.collection.Collection.find_one')
+    @mock.patch('pymongo.collection.Collection.insert_one')
     def test_submit_playlist(self, mock_insert):
         """Test submitting a new playlist"""
         result = self.client.post('/playlist', data=sample_form_data)
@@ -69,9 +69,19 @@ class PlaylistTests(TestCase):
         self.assertEqual(result.status, '302 FOUND')
         mock_insert.assert_called_with(sample_playlist)
 
-    #@mock.patch('pymongo.collection.Collection.update_one')
-    #def test_update_playlist(self, mock_update):
+    @mock.patch('pymongo.collection.Collection.update_one')
+    def test_update_playlist(self, mock_update):
+        result = self.client.post(f'/playlist/{sample_playlist_id}', data = sample_form_data)
 
+        self.assertEqual(result.status, '302 FOUND')
+        mock_update.assert_called_with({'_id': sample_playlist_id}, {'$set': sample_playlist})
 
-    if __name__ == '__main__':
-        unittest_main()
+    @mock.patch('pymongo.collection.Collection.delete_one')
+    def test_delete_playlist(self, mock_delete):
+        form_data = {'method': 'DELETE'}
+        result = self.client.post(f'/playlist/{sample_playlist_id}/delete', data = form_data)
+        self.assertEqual(result.status, '302 FOUND')
+        mock_delete.assert_called_with({'_id': sample_playlist_id})
+
+if __name__ == '__main__':
+     unittest_main()
