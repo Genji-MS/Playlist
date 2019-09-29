@@ -4,10 +4,12 @@
 {% block content %}
     <h1>Playlist:</h1>
 
-    <a href ='/playlist/new'>New Playlist</a>
+    <!-- <a href ='/playlist/new'>New Playlist</a> this is in the navbar now-->
 
     {% for list in playlist %}
-        <h2><a href='/playlist/{{list._id}}'>{{list.title}}</a></h2>
-        <small>{{list.description}}</small>
+        <div class = "col-sm-3">
+            <h2><a href='/playlist/{{list._id}}'>{{list.title}}</a></h2>
+            <small>{{list.description}}</small>
+        </div>
     {% endfor %}
 {% endblock %}

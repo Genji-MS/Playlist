@@ -2,24 +2,25 @@
 <fieldset>
     <legend>{{ title }}</legend>
     <!-- TITLE -->
-    <p> 
+    <div class="form-group"> 
         <label for="title">Title</label></br>
-        <input id="title" type="text" name="title" value="{{playlist.title}}">
-    </p>
+        <input class="form-control" id="title" type="text" name="title" value="{{playlist.title}}">
+    </div>
     
     <!-- DESCRIPTION -->
-    <p> 
+    <div class="form-group"> 
         <label for="description">Description</label></br>
-        <input id="description" type="text" name="description" value="{{playlist.description}}">
-    </p>
+        <input class="form-control" id="description" type="text" name="description" value="{{playlist.description}}">
+    </div>
     <!-- VIDEO LINKS -->
-    <p> 
+    <div class="form-group"> 
         <label for="playlist-videos">Video URLs</label></br>
-        <p>Add videos in the form of 'https://youtube.com/embed/KEY' seperate with a new line</p>
-        <textarea id="playlist-videos" name="videos" rows = 10 >{{ "\n".join(playlist.videos) }}</textarea>
-    </p>
+        <p class="text-muted">Add videos in the form of 'https://youtube.com/embed/KEY' seperate with a new line</p>
+        <textarea class="form-control" id="playlist-videos" name="videos" rows = 10 >{{ "\n".join(playlist.videos) }}</textarea>
+    </div>
 </fieldset>
 <!-- BUTTON -->
+<!-- deprecated in favor of individual page buttons
 <p>
     <button type="submit">Save Playlist</button>
-</p>
+</p> -->
