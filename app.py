@@ -26,7 +26,7 @@ def playlist_index():
 @app.route('/playlist/new')
 def playlist_new():
     """Create New playlist"""
-    return render_template('playlist_new.html')
+    return render_template('playlist_new.html', playlist = {}, title = 'New Playlist')
 
 @app.route('/playlist', methods=['POST'])
 def playlist_submit():
@@ -54,6 +54,28 @@ def playlist_show(playlist_id):
         for index in range(len(p_list['videos'])):
             p_list['videos'][index] = p_list['videos'][index].replace("watch?v=", "embed/")
     return render_template('playlist_show.html',playlist=p_list)
+
+@app.route('/playlist/<playlist_id>/edit')
+def playlist_edit(playlist_id):
+    """Show the edit form for a playlist"""
+    p_list = playlist.find_one({'_id': ObjectId(playlist_id)})
+    return render_template('playlist_edit.html',playlist=p_list, title='Edit Playlist')
+
+@app.route('/playlist/<playlist_id>', methods=['POST'])
+def playlist_update(playlist_id):
+    """Submit and edited playlist"""
+    updated_playlist = {
+        'title': request.form.get('title'),
+        'description': request.form.get('description'),
+        'videos': request.form.get('videos').split()
+    }
+    #Youtube doesn't like to display with watch?, replace this component of the URL to embed/ and it'll work fine.
+    for index in range(len(updated_playlist['videos'])):
+        updated_playlist['videos'][index] = updated_playlist['videos'][index].replace("watch?v=", "embed/")
+    playlist.update_one(
+        {'_id':ObjectId(playlist_id)},
+        {'$set':updated_playlist})
+    return redirect(url_for('playlist_show', playlist_id = playlist_id))
 
 if app.name == '__main__':
     app.run(debug=True)

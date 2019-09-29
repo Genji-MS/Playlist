@@ -1,8 +1,8 @@
-<!-- templates/playlist_new.html -->
+<!-- templates/playlist_edit.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<form method="POST" action="/playlist">
+<form method="POST" action="/playlist/{{playlist._id}}">
     {% include 'partials/playlist_form.html' %}
 </form>
 {% endblock %}
