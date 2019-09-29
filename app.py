@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 client = MongoClient()
 db = client.Playlist
@@ -35,9 +36,24 @@ def playlist_submit():
         'description': request.form.get('description'),
         'videos': request.form.get('videos').split()
     }
-    playlist.insert_one(p_list)
+    #Youtube doesn't like to display in this way, replace this component of the URL to embed/ and it'll work fine.
+    for index in range(len(p_list['videos'])):
+        p_list['videos'][index] = p_list['videos'][index].replace("watch?v=", "embed/")
+
+    playlist_id = playlist.insert_one(p_list).inserted_id
     #print(request.form.to_dict())
-    return redirect(url_for('playlist_index'))
+    #return redirect(url_for('playlist_index'))
+    return redirect(url_for('playlist_show', playlist_id = playlist_id))
+
+@app.route('/playlist/<playlist_id>')
+def playlist_show(playlist_id):
+    """Show a single playlist"""
+    p_list = playlist.find_one({'_id': ObjectId(playlist_id)})
+    #Double check URL's that may have been saved without /embed/ and check that they even have links.
+    if p_list.get('videos'):
+        for index in range(len(p_list['videos'])):
+            p_list['videos'][index] = p_list['videos'][index].replace("watch?v=", "embed/")
+    return render_template('playlist_show.html',playlist=p_list)
 
 if app.name == '__main__':
     app.run(debug=True)

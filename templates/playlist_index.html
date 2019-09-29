@@ -4,10 +4,10 @@
 {% block content %}
     <h1>Playlist:</h1>
 
-    <a href = '/playlist/new'>New Playlist</a>
-    
+    <a href ='/playlist/new'>New Playlist</a>
+
     {% for list in playlist %}
-        <h2>{{list.title}}</h2>
+        <h2><a href='/playlist/{{list._id}}'>{{list.title}}</a></h2>
         <small>{{list.description}}</small>
     {% endfor %}
 {% endblock %}
