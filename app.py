@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/Playlist')
-client = MongoClient(host=host)
+client = MongoClient(host=f'{host}?retryWrites=False')
 db = client.get_default_database()
 playlist= db.playlist
 
@@ -92,4 +92,5 @@ def playlist_delete(playlist_id):
     return redirect(url_for('playlist_index'))
 
 if app.name == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5000))
