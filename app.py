@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
+#heroku version
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/Playlist')
 client = MongoClient(host=f'{host}?retryWrites=false')
 db = client.get_default_database()
@@ -13,6 +14,8 @@ playlist= db.playlist
 #client = MongoClient()
 #db = client.Playlist
 #playlist = db.playlist
+
+comments= db.comments
 
 app = Flask(__name__)
 
@@ -57,11 +60,12 @@ def playlist_submit():
 def playlist_show(playlist_id):
     """Show a single playlist"""
     p_list = playlist.find_one({'_id': ObjectId(playlist_id)})
+    p_list_comments = comments.find({'playlist_id': ObjectId(playlist_id)})
     #Double check URL's that may have been saved without /embed/ and check that they even have links.
     if p_list.get('videos'):
         for index in range(len(p_list['videos'])):
             p_list['videos'][index] = p_list['videos'][index].replace("watch?v=", "embed/")
-    return render_template('playlist_show.html',playlist=p_list)
+    return render_template('playlist_show.html',playlist=p_list,comments=p_list_comments)
 
 @app.route('/playlist/<playlist_id>/edit')
 def playlist_edit(playlist_id):
@@ -90,6 +94,19 @@ def playlist_delete(playlist_id):
     """Delete specified playlist"""
     playlist.delete_one({'_id': ObjectId(playlist_id)})
     return redirect(url_for('playlist_index'))
+
+@app.route('/playlist/comments', methods=["POST"])
+def comments_new():
+    """Submit new comment"""
+    comment = {
+        #'title': request.form.get('title'), title is like an email title, who uses them?
+        'text': request.form.get('text'),
+        'playlist_id': ObjectId(request.form.get('playlist_id'))
+    }
+    print(comment)
+    comment_id = comments.insert_one(comment).inserted_id
+    return redirect(url_for('playlist_show', playlist_id=request.form.get('playlist_id')))
+    #return 'playlist comments'
 
 if app.name == '__main__':
     #app.run(debug=True)

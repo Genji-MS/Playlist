@@ -1,0 +1,22 @@
+<!-- templates/partials/comment_form.html -->
+<form action = "/playlist/comments" method="POST">
+    <input type="hidden" value="{{ playlist._id }}" name="playlist_id"/>
+    <fieldset>
+        <legend>Add a Comment</legend>
+
+        <!-- COMMENT TEXT -->
+        <div class='form-group'>
+            <!-- <label for='comment-text'>Text</label><br> unwanted text -->
+            <textarea class='form-control'
+                id='comment-text'
+                name='text'
+                 rows='10'
+                placeholder='Your comment...'></textarea>
+        </div>
+    </fieldset>
+
+    <!-- BUTTON -->
+    <div class='form-group'>
+        <button class='btn btn-primary' type='submit'>Post Comment</button>
+    </div>
+</form>
